@@ -175,49 +175,81 @@ function absInnerMusic(strInner, str_douscore){
    
   //link
   var str_link = document.URL;
-  if (!str_link.includes("subject")) {
+  if (!str_link.includes("subject")&&!str_link.includes("series")) {
     return;
   }
-  var arr_id = str_link.match(/(\d+)/);
-  var str_id = arr_id[0];
-  str_link = "https://"+ dm + ".douban.com/subject/" + str_id;
   
-  str_link = str_link.replace(/\/+$/,'');
-  
-  //img
-  var str_img = getCurrentSrcRecursively(document.getElementById("mainpic"));
-  str_img = str_img.replace(/.webp/,'.jpg');
+  var str_disp = "";
+  if (!str_link.includes("series")) {
+    var arr_id = str_link.match(/(\d+)/);
+    var str_id = arr_id[0];
+    str_link = "https://"+ dm + ".douban.com/subject/" + str_id;
 
-  //score
-  var o_num = document.getElementsByClassName("rating_num");
-  var str_douscore = "douscore:;";
-  if (o_num.length) {
-    str_douscore = "douscore:"+document.getElementsByClassName("rating_num")[0].innerText+";";
+    str_link = str_link.replace(/\/+$/,'');
+
+    //img
+    var str_img = getCurrentSrcRecursively(document.getElementById("mainpic"));
+    str_img = str_img.replace(/.webp/,'.jpg');
+
+    //score
+    var o_num = document.getElementsByClassName("rating_num");
+    var str_douscore = "douscore:;";
+    if (o_num.length) {
+      str_douscore = "douscore:"+document.getElementsByClassName("rating_num")[0].innerText+";";
+    }
+
+
+    //abs
+
+    var str_inner = document.getElementById("info").innerText;
+    var str_abs = "";
+    if ("movie"==dm) {
+      str_abs = absInnerMovie(str_inner, str_douscore);
+    }
+    else if ("book"==dm) {
+      str_abs = absInnerBook(str_inner, str_douscore);
+    }
+    else if ("music"==dm) {
+      str_abs = absInnerMusic(str_inner, str_douscore);
+    }
+
+    str_disp = sprintf(
+      '[myfv id="" type="%s" title="%s" img="%s" link="%s" score="99" abs="%s" series="0"/]',
+      dm,
+      str_title,
+      str_img,
+      str_link,
+      str_abs
+    );
+  }
+  else {
+    var arr_id = str_link.match(/(\d+)/);
+    var str_id = arr_id[0];
+    str_link = "https://book.douban.com/series/" + str_id;
+    var str_text = document.getElementsByClassName("pl2")[0].textContent;
+    str_text = str_text.replaceAll("\n","");
+    var str_abs = str_text.replaceAll(" ","");
+    str_abs = str_abs.replace("册数:",";册数:")+";";
+    var sitems = document.getElementsByClassName("subject-item");
+    var str_img = "";
+    Array.prototype.forEach.call(sitems, function(sitem, index) {
+      if ("" != str_img) {
+        str_img += ",";
+      }
+      str_img += getCurrentSrcRecursively(sitem);
+      
+    });
+    str_disp = sprintf(
+      '[myfv id="" type="book" title="%s" img="%s" link="%s" score="99" abs="%s" series="1"/]',
+      str_title,
+      str_img,
+      str_link,
+      str_abs
+    );
+    
   }
   
   
-  //abs
-  
-  var str_inner = document.getElementById("info").innerText;
-  var str_abs = "";
-  if ("movie"==dm) {
-    str_abs = absInnerMovie(str_inner, str_douscore);
-  }
-  else if ("book"==dm) {
-    str_abs = absInnerBook(str_inner, str_douscore);
-  }
-  else if ("music"==dm) {
-    str_abs = absInnerMusic(str_inner, str_douscore);
-  }
-  
-  var str_disp = sprintf(
-    '[myfv id="" type="%s" title="%s" img="%s" link="%s" score="99" abs="%s" series="0"/]',
-    dm,
-    str_title,
-    str_img,
-    str_link,
-    str_abs
-  );
   
   var box = document.createElement( "div" );
   box.id = "myAlertBox";
