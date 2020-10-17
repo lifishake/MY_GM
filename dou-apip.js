@@ -1,6 +1,10 @@
 // ==UserScript==
 // @name     dou-apip
 // @version  2
+// @match    https://movie.douban.com/*
+// @match    https://music.douban.com/*
+// @match    https://book.douban.com/*
+// @match    https://www.douban.com/doulist/*
 // @grant    none
 // ==/UserScript==
 function sprintf(format, ...args) {
@@ -12,7 +16,7 @@ function fallbackCopyTextToClipboard(text) {
   var textArea = document.createElement("textarea");
   textArea.value = text;
   textArea.id = "clippp";
-  
+
   // Avoid scrolling to bottom
   textArea.style.top = "0";
   textArea.style.left = "0";
@@ -86,7 +90,7 @@ function absInnerMovie(strInner, str_douscore){
   {
     var tmp_a = arr_abs[a].trim();
     var tmp_arr_abs = tmp_a.split(":");
-    
+
     if (tmp_arr_abs.length < 2) {
       continue;
     }
@@ -119,7 +123,7 @@ function absInnerBook(strInner, str_douscore){
   {
     var tmp_a = arr_abs[a].trim();
     var tmp_arr_abs = tmp_a.split(":");
-    
+
     if (tmp_arr_abs.length < 2) {
       continue;
     }
@@ -149,7 +153,7 @@ function absInnerMusic(strInner, str_douscore){
   {
     var tmp_a = arr_abs[a].trim();
     var tmp_arr_abs = tmp_a.split(":");
-    
+
     if (tmp_arr_abs.length < 2) {
       continue;
     }
@@ -169,23 +173,23 @@ function absInnerMusic(strInner, str_douscore){
 
 (function(){
   var dm = document.domain.replace(".douban.com",'');
-  
+
   //title
   var str_title = document.title.replace("(豆瓣)",'').trim();
-   
+
   //link
   var str_link = document.URL;
   if (!str_link.includes("subject")&&!str_link.includes("series")&&!str_link.includes("doulist")) {
     return;
   }
-  
+
   var str_disp = "";
   if (str_link.includes("doulist")) {
 		var sitems = document.getElementsByClassName("title");
     Array.prototype.forEach.call(sitems, function(sitem, index) {
       str_disp += sitem.innerText;
-      str_disp += "\n";      
-    });      
+      str_disp += "\n";
+    });
   }
   else if (!str_link.includes("series")) {
     var arr_id = str_link.match(/(\d+)/);
@@ -230,34 +234,33 @@ function absInnerMusic(strInner, str_douscore){
     );
   }
   else {
-    var arr_id = str_link.match(/(\d+)/);
-    var str_id = arr_id[0];
-    str_link = "https://book.douban.com/series/" + str_id;
+    var arr_id1 = str_link.match(/(\d+)/);
+    var str_id1 = arr_id1[0];
+    str_link = "https://book.douban.com/series/" + str_id1;
     var str_text = document.getElementsByClassName("pl2")[0].textContent;
     str_text = str_text.replaceAll("\n","");
-    var str_abs = str_text.replaceAll(" ","");
-    str_abs = str_abs.replace("册数:",";册数:")+";";
-    var sitems = document.getElementsByClassName("subject-item");
-    var str_img = "";
-    Array.prototype.forEach.call(sitems, function(sitem, index) {
-      if ("" != str_img) {
-        str_img += ",";
+    var str_abs1 = str_text.replaceAll(" ","");
+    str_abs1 = str_abs1.replace("册数:",";册数:")+";";
+    var sitems1 = document.getElementsByClassName("subject-item");
+    var str_img1 = "";
+    Array.prototype.forEach.call(sitems1, function(sitem, index) {
+      if ("" != str_img1) {
+        str_img1 += ",";
       }
-      str_img += getCurrentSrcRecursively(sitem);
-      
+      str_img1 += getCurrentSrcRecursively(sitem);
+
     });
     str_disp = sprintf(
       '[myfv id="" type="book" title="%s" img="%s" link="%s" score="99" abs="%s" series="1"/]',
       str_title,
-      str_img,
+      str_img1,
       str_link,
-      str_abs
+      str_abs1
     );
-    
   }
-  
-  
-  
+
+
+
   var box = document.createElement( "div" );
   box.id = "myAlertBox";
   box.textContent = "";
@@ -271,7 +274,7 @@ function absInnerMusic(strInner, str_douscore){
   box.style.maxWidth = '400px';
   box.style.zIndex = '5';
   document.body.insertBefore(box, document.body.firstChild);
-   
+
   var closeButton = document.createElement( "div" );
   closeButton.className = 'myCloseButton';
   closeButton.textContent = 'X';
@@ -281,13 +284,13 @@ function absInnerMusic(strInner, str_douscore){
   closeButton.style.marginLeft = '8px';
   closeButton.style.float = 'right';
   closeButton.style.cursor = 'pointer';
-   
+
   box.insertBefore( closeButton, box.firstChild );
-   
+
   closeButton.addEventListener( 'click', function () {
     box.parentNode.removeChild( box );
     copyTextToClipboard(str_disp);
   }, true );
-   
-   
+
+
  })();
