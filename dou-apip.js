@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name     dou-apip
-// @version  1
+// @version  2
 // @grant    none
 // ==/UserScript==
 function sprintf(format, ...args) {
@@ -175,12 +175,19 @@ function absInnerMusic(strInner, str_douscore){
    
   //link
   var str_link = document.URL;
-  if (!str_link.includes("subject")&&!str_link.includes("series")) {
+  if (!str_link.includes("subject")&&!str_link.includes("series")&&!str_link.includes("doulist")) {
     return;
   }
   
   var str_disp = "";
-  if (!str_link.includes("series")) {
+  if (str_link.includes("doulist")) {
+		var sitems = document.getElementsByClassName("title");
+    Array.prototype.forEach.call(sitems, function(sitem, index) {
+      str_disp += sitem.innerText;
+      str_disp += "\n";      
+    });      
+  }
+  else if (!str_link.includes("series")) {
     var arr_id = str_link.match(/(\d+)/);
     var str_id = arr_id[0];
     str_link = "https://"+ dm + ".douban.com/subject/" + str_id;
