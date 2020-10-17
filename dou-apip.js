@@ -187,9 +187,13 @@ function absInnerMusic(strInner, str_douscore){
   if (str_link.includes("doulist")) {
 		var sitems = document.getElementsByClassName("title");
     Array.prototype.forEach.call(sitems, function(sitem, index) {
-      str_disp += sitem.innerText;
-      str_disp += "\n";
+        var strstr = sitem.innerText;
+        if (!strstr.includes("播放全片")) {
+            str_disp += strstr;
+            str_disp += "\n";
+        }
     });
+    //str_disp = str_disp.replaceAll("播放全片","");
   }
   else if (!str_link.includes("series")) {
     var arr_id = str_link.match(/(\d+)/);
