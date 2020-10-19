@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name     dou-apip
-// @version  3
+// @version  3.0
 // @downloadURL https://github.com/lifishake/MY_GM/blob/main/dou-apip.js
 // @updateURL https://github.com/lifishake/MY_GM/blob/main/dou-apip.js
 // @match    https://movie.douban.com/*
